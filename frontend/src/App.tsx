@@ -6,6 +6,10 @@ import CartPage from "./cart/_layout/CartPage";
 import ContactPage from "./contact/_layout/ContactPage";
 import AboutPage from "./about/_layout/AboutPage";
 import CheckoutPage from "./checkout/_layout/CheckoutPage";
+import CollectionPage from "./collection/_layout/CollectionPage";
+import NewPage from "./new/_layout/NewPage";
+import FaqPage from "./faq/_layout/FaqPage";
+import FavoritesPage from "./favorites/_layout/FavoritesPage";
 
 function App() {
   return (
@@ -17,6 +21,11 @@ function App() {
       <Route path="/cart" element={<CartPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/checkout" element={<CheckoutPage />} />
+      <Route path="/collections" element={<CollectionPage />} />
+      <Route path="/new" element={<NewPage />} />
+      <Route path="/faq" element={<FaqPage />} />
+      <Route path="/favorites" element={<FavoritesPage />} />
+      <Route path="*" element={<div>404 Page Not Found</div>} />
     </Routes>
   );
 }

@@ -55,7 +55,9 @@ export default function Navbar() {
           <Link to="/login">
             <User className="w-5 h-5 cursor-pointer hover:text-gray-600 transition-colors" />
           </Link>
-          <Heart className="w-5 h-5 cursor-pointer hover:text-gray-600 transition-colors" />
+          <Link to="/favorites">
+            <Heart className="w-5 h-5 cursor-pointer hover:text-gray-600 transition-colors" />
+          </Link>
           <div className="relative cursor-pointer hover:text-gray-600 transition-colors">
             <Link to="/cart">
               <ShoppingBag className="w-5 h-5" />

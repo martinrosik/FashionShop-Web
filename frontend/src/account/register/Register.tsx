@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white px-6 py-24">
@@ -92,21 +94,21 @@ export default function RegisterPage() {
           <div className="mt-8 text-center">
             <p className="text-gray-600 font-sans text-sm">
               Already have an account?{" "}
-              <button
-                className="text-black hover:underline font-medium"
-              >
-                Sign in
-              </button>
+              <Link to="/login">
+                <button className="text-black hover:underline font-medium">
+                  Sign in
+                </button>
+              </Link>
             </p>
           </div>
         </div>
 
         <div className="mt-6 text-center">
-          <button
-            className="text-gray-600 hover:text-black transition-colors text-sm font-sans"
-          >
-            ← Back to shop
-          </button>
+          <Link to="/">
+            <button className="text-gray-600 hover:text-black transition-colors text-sm font-sans">
+              ← Back to shop
+            </button>
+          </Link>
         </div>
       </div>
     </div>
