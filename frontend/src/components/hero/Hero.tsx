@@ -1,4 +1,5 @@
 import { ChevronRight } from "lucide-react";
+import { Link } from "react-router";
 
 export default function Hero() {
   return (
@@ -20,10 +21,13 @@ export default function Hero() {
 
         {/* CTA Button */}
         <button className="group relative px-12 py-4 bg-black text-white tracking-widest text-sm overflow-hidden transition-all duration-300 rounded-md">
-          <span className="relative z-10 flex items-center gap-2">
+          <Link
+            to={"/collections"}
+            className="relative z-10 flex items-center gap-2"
+          >
             EXPLORE NOW
             <ChevronRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" />
-          </span>
+          </Link>
           <span className="absolute inset-0 border-b-2 border-white opacity-0 group-hover:opacity-100 transition-opacity"></span>
         </button>
       </div>

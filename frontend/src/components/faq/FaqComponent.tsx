@@ -43,12 +43,12 @@ export default function FaqComponent() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative h-[50vh] flex items-center justify-center bg-white">
+      <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
             backgroundImage:
-              "url(https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=1600&h=900&fit=crop)",
+              "url(https://images.unsplash.com/photo-1600353068865-4c3dfe84f4d5?w=1600&h=1000&fit=crop)",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -57,8 +57,10 @@ export default function FaqComponent() {
         </div>
 
         <div className="relative z-10 text-center text-white px-6">
-          <h1 className="text-6xl font-light mb-4 tracking-tight">FAQs</h1>
-          <p className="text-lg font-light tracking-wide">
+          <h1 className="text-6xl md:text-7xl font-light mb-6 tracking-tight">
+            FAQ
+          </h1>
+          <p className="text-xl md:text-2xl font-light tracking-wide">
             Find answers to your most common questions
           </p>
         </div>

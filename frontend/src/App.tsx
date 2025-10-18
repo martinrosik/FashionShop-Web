@@ -10,6 +10,8 @@ import CollectionPage from "./collection/_layout/CollectionPage";
 import NewPage from "./new/_layout/NewPage";
 import FaqPage from "./faq/_layout/FaqPage";
 import FavoritesPage from "./favorites/_layout/FavoritesPage";
+import AppointmentPage from "./appointment/_layout/AppointmenPage";
+import NotFoundPage from "./notfound/_layout/NotFoundPage";
 
 function App() {
   return (
@@ -25,7 +27,8 @@ function App() {
       <Route path="/new" element={<NewPage />} />
       <Route path="/faq" element={<FaqPage />} />
       <Route path="/favorites" element={<FavoritesPage />} />
-      <Route path="*" element={<div>404 Page Not Found</div>} />
+      <Route path="/book-appointment" element={<AppointmentPage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

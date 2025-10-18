@@ -24,7 +24,6 @@ export default function Footer() {
       title: "FOLLOW US",
       links: [
         { name: "Instagram", path: "#" },
-        { name: "Pinterest", path: "#" },
         { name: "Facebook", path: "#" },
         { name: "Twitter", path: "#" },
       ],

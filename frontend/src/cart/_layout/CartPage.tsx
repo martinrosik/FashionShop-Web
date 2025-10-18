@@ -4,8 +4,8 @@ import Navbar from "../../components/navbar/Navbar";
 export default function CartPage() {
   return (
     <>
-    <Navbar />
-    <Cart />
+      <Navbar />
+      <Cart />
     </>
   );
 }
