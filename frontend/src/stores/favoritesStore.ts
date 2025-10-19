@@ -1,34 +1,28 @@
+// stores/favoritesStore.ts
 import { create } from "zustand";
 import type { Product } from "../types/types";
 
 interface FavoritesState {
   favorites: Product[];
+  addToFavorites: (product: Product) => void;
   removeFromFavorites: (id: number) => void;
+  isFavorite: (id: number) => boolean;
 }
 
-export const useFavoritesStore = create<FavoritesState>((set) => ({
-  favorites: [
-    {
-      id: 3,
-      name: "Cashmere Sweater",
-      price: 189,
-      image:
-        "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&h=600&fit=crop",
-      tag: "Sale",
-      category: "",
-    },
-    {
-      id: 4,
-      name: "Wide Leg Trousers",
-      price: 149,
-      image:
-        "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=600&fit=crop",
-      tag: "New",
-      category: "",
-    },
-  ],
+export const useFavoritesStore = create<FavoritesState>((set, get) => ({
+  favorites: [],
+
+  addToFavorites: (product) =>
+    set((state) => {
+      // Avoid duplicates
+      if (state.favorites.some((item) => item.id === product.id)) return state;
+      return { favorites: [...state.favorites, product] };
+    }),
+
   removeFromFavorites: (id) =>
     set((state) => ({
       favorites: state.favorites.filter((item) => item.id !== id),
     })),
+
+  isFavorite: (id) => get().favorites.some((item) => item.id === id),
 }));

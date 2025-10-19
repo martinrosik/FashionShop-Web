@@ -1,39 +1,45 @@
 import { create } from "zustand";
-import type { CartItem } from "../types/types";
+import type { CartItem, Product } from "../types/types";
 
 interface CartState {
   cartItems: CartItem[];
+  addToCart: (product: Product, size?: string) => void;
   updateQuantity: (id: number, change: number) => void;
   removeFromCart: (id: number) => void;
   getCartTotal: () => number;
-  clearCart: () => void; // Add this line
+  clearCart: () => void;
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
-  cartItems: [
-    {
-      id: 1,
-      name: "Silk Minimal Dress",
-      price: 289,
-      image:
-        "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=200&h=300&fit=crop",
-      quantity: 1,
-      size: "M",
-      tag: "",
-      category: "",
-    },
-    {
-      id: 2,
-      name: "Leather Jacket",
-      price: 459,
-      image:
-        "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=200&h=300&fit=crop",
-      quantity: 1,
-      size: "L",
-      tag: "",
-      category: "",
-    },
-  ],
+  cartItems: [],
+
+  addToCart: (product, size = "M") =>
+    set((state) => {
+      const existing = state.cartItems.find(
+        (item) => item.id === product.id && item.size === size
+      );
+
+      if (existing) {
+        return {
+          cartItems: state.cartItems.map((item) =>
+            item.id === product.id && item.size === size
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          ),
+        };
+      }
+
+      const newItem: CartItem = {
+        ...product,
+        size,
+        quantity: 1,
+        tag: product.tag ?? "",
+        category: product.category ?? "",
+      };
+
+      return { cartItems: [...state.cartItems, newItem] };
+    }),
+
   updateQuantity: (id, change) =>
     set((state) => ({
       cartItems: state.cartItems.map((item) =>
@@ -42,11 +48,14 @@ export const useCartStore = create<CartState>((set, get) => ({
           : item
       ),
     })),
+
   removeFromCart: (id) =>
     set((state) => ({
       cartItems: state.cartItems.filter((item) => item.id !== id),
     })),
+
   getCartTotal: () =>
     get().cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
-  clearCart: () => set({ cartItems: [] }), // This method exists but wasn't in the interface
+
+  clearCart: () => set({ cartItems: [] }),
 }));

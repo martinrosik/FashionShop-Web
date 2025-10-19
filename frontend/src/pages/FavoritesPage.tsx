@@ -1,10 +1,16 @@
+// pages/FavoritesPage.tsx
 import { useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { useFavoritesStore } from "../stores/favoritesStore";
+import ProductCard from "../components/ui/ProductCard";
 
 export default function FavoritesPage() {
   const navigate = useNavigate();
   const { favorites, removeFromFavorites } = useFavoritesStore();
+
+  const handleRemoveFavorite = (id: number) => {
+    removeFromFavorites(id);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24 pb-12 px-6">
@@ -26,40 +32,12 @@ export default function FavoritesPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {favorites.map((product) => (
-              <div
+              <ProductCard
                 key={product.id}
-                className="bg-white rounded-lg overflow-hidden group"
-              >
-                <div className="relative overflow-hidden aspect-[3/4]">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  {product.tag && (
-                    <span className="absolute top-4 left-4 bg-white text-gray-900 px-3 py-1 text-sm font-semibold">
-                      {product.tag}
-                    </span>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => removeFromFavorites(product.id)}
-                    className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-red-50 transition-all"
-                    aria-label={`Remove ${product.name} from favorites`}
-                  >
-                    <Heart className="w-5 h-5 fill-red-500 text-red-500" />
-                  </button>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-                  <p className="text-gray-600 font-medium mb-4">
-                    ${product.price}
-                  </p>
-                  <button className="w-full bg-gray-900 text-white py-3 rounded-lg hover:bg-gray-800 transition-all font-semibold">
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
+                product={product}
+                showHeart={true}
+                onClick={() => handleRemoveFavorite(product.id)}
+              />
             ))}
           </div>
         )}

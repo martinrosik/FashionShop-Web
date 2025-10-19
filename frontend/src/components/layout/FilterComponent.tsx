@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Filter, X } from "lucide-react";
 import type { Product } from "../../types/types.ts";
 
@@ -14,7 +14,6 @@ interface FilterComponentProps {
   onFilterChange: (filteredProducts: Product[]) => void;
 }
 
-// Predefined filter options based on your product data structure
 const priceRanges = [
   { label: "Under $100", min: 0, max: 100 },
   { label: "$100 - $200", min: 100, max: 200 },
@@ -22,14 +21,16 @@ const priceRanges = [
   { label: "Over $400", min: 400, max: Infinity },
 ];
 
-// Extract unique categories, sizes, and tags from products
-const getUniqueValues = (products: Product[], key: keyof Product): string[] => {
-  const values = products
-    .map((product) => product[key])
-    .filter((value): value is string => value !== undefined && value !== "");
-
-  return Array.from(new Set(values)).sort();
-};
+const getUniqueValues = (products: Product[], key: keyof Product): string[] =>
+  Array.from(
+    new Set(
+      products
+        .map((p) => p[key])
+        .filter(
+          (val): val is string => typeof val === "string" && val.trim() !== ""
+        )
+    )
+  ).sort();
 
 export default function FilterComponent({
   products,
@@ -42,75 +43,47 @@ export default function FilterComponent({
     tags: [],
   });
 
-  const [sortBy, setSortBy] = useState<string>("featured");
-  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+  const [sortBy, setSortBy] = useState("featured");
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  // Get unique values from products for filter options
-  const categories = ["All", ...getUniqueValues(products, "category")];
-  const sizes = getUniqueValues(products, "size");
-  const tags = getUniqueValues(products, "tag");
+  const categories = useMemo(
+    () => ["All", ...getUniqueValues(products, "category")],
+    [products]
+  );
+  const sizes = useMemo(() => getUniqueValues(products, "size"), [products]);
+  const tags = useMemo(() => getUniqueValues(products, "tag"), [products]);
 
-  // Apply filters whenever filters or sortBy changes
   useEffect(() => {
-    const filteredProducts = applyFilters(products, filters);
-    const sortedProducts = sortProducts(filteredProducts, sortBy);
-    onFilterChange(sortedProducts);
+    const filtered = applyFilters(products, filters);
+    const sorted = sortProducts(filtered, sortBy);
+    onFilterChange(sorted);
   }, [filters, sortBy, products, onFilterChange]);
 
-  const applyFilters = (
-    productsToFilter: Product[],
-    currentFilters: FilterState
-  ): Product[] => {
-    return productsToFilter.filter((product) => {
-      // Category filter
+  const applyFilters = (data: Product[], active: FilterState): Product[] =>
+    data.filter((p) => {
       if (
-        currentFilters.categories.length > 0 &&
-        !currentFilters.categories.includes("All")
-      ) {
-        if (
-          !product.category ||
-          !currentFilters.categories.includes(product.category)
-        ) {
-          return false;
-        }
+        active.categories.length &&
+        !active.categories.includes("All") &&
+        !active.categories.includes(p.category ?? "")
+      )
+        return false;
+      if (active.priceRanges.length) {
+        const inRange = active.priceRanges.some((label) => {
+          const r = priceRanges.find((x) => x.label === label);
+          return r && p.price >= r.min && p.price <= r.max;
+        });
+        if (!inRange) return false;
       }
-
-      // Price range filter
-      if (currentFilters.priceRanges.length > 0) {
-        const matchesPriceRange = currentFilters.priceRanges.some(
-          (rangeLabel) => {
-            const range = priceRanges.find((r) => r.label === rangeLabel);
-            if (!range) return false;
-            return product.price >= range.min && product.price <= range.max;
-          }
-        );
-        if (!matchesPriceRange) return false;
-      }
-
-      // Size filter
-      if (currentFilters.sizes.length > 0) {
-        if (!product.size || !currentFilters.sizes.includes(product.size)) {
-          return false;
-        }
-      }
-
-      // Tag filter
-      if (currentFilters.tags.length > 0) {
-        if (!product.tag || !currentFilters.tags.includes(product.tag)) {
-          return false;
-        }
-      }
-
+      if (active.sizes.length && !active.sizes.includes(p.size ?? ""))
+        return false;
+      if (active.tags.length && !active.tags.includes(p.tag ?? ""))
+        return false;
       return true;
     });
-  };
 
-  const sortProducts = (
-    productsToSort: Product[],
-    sortMethod: string
-  ): Product[] => {
-    const sorted = [...productsToSort];
-    switch (sortMethod) {
+  const sortProducts = (data: Product[], method: string): Product[] => {
+    const sorted = [...data];
+    switch (method) {
       case "price-low-high":
         return sorted.sort((a, b) => a.price - b.price);
       case "price-high-low":
@@ -121,76 +94,48 @@ export default function FilterComponent({
         return sorted.sort((a, b) => b.name.localeCompare(a.name));
       case "newest":
         return sorted.sort((a, b) => b.id - a.id);
-      case "featured":
       default:
         return sorted;
     }
   };
 
-  const handleCategoryChange = (category: string) => {
+  const toggleFilter = (key: keyof FilterState, value: string) =>
+    setFilters((prev) => ({
+      ...prev,
+      [key]: prev[key].includes(value)
+        ? prev[key].filter((v) => v !== value)
+        : [...prev[key], value],
+    }));
+
+  const handleCategoryChange = (cat: string) =>
     setFilters((prev) => {
-      if (category === "All") {
+      if (cat === "All")
         return {
           ...prev,
           categories: prev.categories.includes("All") ? [] : ["All"],
         };
-      }
-
-      const newCategories = prev.categories.includes(category)
-        ? prev.categories.filter((c) => c !== category)
-        : [...prev.categories.filter((c) => c !== "All"), category];
-
-      return { ...prev, categories: newCategories };
+      return {
+        ...prev,
+        categories: prev.categories.includes(cat)
+          ? prev.categories.filter((c) => c !== cat)
+          : [...prev.categories.filter((c) => c !== "All"), cat],
+      };
     });
-  };
 
-  const handlePriceRangeChange = (priceRange: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      priceRanges: prev.priceRanges.includes(priceRange)
-        ? prev.priceRanges.filter((p) => p !== priceRange)
-        : [...prev.priceRanges, priceRange],
-    }));
-  };
-
-  const handleSizeChange = (size: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      sizes: prev.sizes.includes(size)
-        ? prev.sizes.filter((s) => s !== size)
-        : [...prev.sizes, size],
-    }));
-  };
-
-  const handleTagChange = (tag: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      tags: prev.tags.includes(tag)
-        ? prev.tags.filter((t) => t !== tag)
-        : [...prev.tags, tag],
-    }));
-  };
-
-  const clearAllFilters = () => {
-    setFilters({
-      categories: [],
-      priceRanges: [],
-      sizes: [],
-      tags: [],
-    });
+  const clearAll = () => {
+    setFilters({ categories: [], priceRanges: [], sizes: [], tags: [] });
     setSortBy("featured");
   };
 
-  const getActiveFilterCount = () => {
-    return (
-      filters.categories.length +
-      filters.priceRanges.length +
-      filters.sizes.length +
-      filters.tags.length
-    );
-  };
+  const countActive = Object.values(filters).reduce(
+    (acc, v) => acc + v.length,
+    0
+  );
 
-  const FilterSection = ({
+  const getCount = (key: keyof Product, value: string) =>
+    products.filter((p) => p[key] === value).length;
+
+  const Section = ({
     title,
     children,
   }: {
@@ -203,7 +148,7 @@ export default function FilterComponent({
     </div>
   );
 
-  const FilterCheckbox = ({
+  const Checkbox = ({
     label,
     checked,
     onChange,
@@ -220,7 +165,7 @@ export default function FilterComponent({
           type="checkbox"
           checked={checked}
           onChange={onChange}
-          className="w-4 h-4 rounded border-2 border-gray-300 text-gray-900 focus:ring-gray-900 focus:ring-2 focus:ring-offset-2"
+          className="w-4 h-4 rounded border-2 border-gray-300 text-gray-900 focus:ring-gray-900"
         />
         <span className="text-gray-700 group-hover:text-gray-900 transition-colors">
           {label}
@@ -234,7 +179,7 @@ export default function FilterComponent({
     </label>
   );
 
-  const FilterButton = ({
+  const Button = ({
     label,
     selected,
     onClick,
@@ -247,12 +192,11 @@ export default function FilterComponent({
   }) => (
     <button
       onClick={onClick}
-      className={`px-4 py-2 rounded-lg border-2 transition-all font-medium text-sm relative ${
+      className={`px-4 py-2 rounded-lg border-2 font-medium text-sm relative transition-all ${
         selected
           ? "border-gray-900 bg-gray-900 text-white"
           : "border-gray-200 text-gray-700 hover:border-gray-900 hover:text-gray-900"
       }`}
-      type="button"
     >
       {label}
       {count !== undefined && (
@@ -267,20 +211,6 @@ export default function FilterComponent({
     </button>
   );
 
-  // Count products for each filter option
-  const getCategoryCount = (category: string) => {
-    if (category === "All") return products.length;
-    return products.filter((product) => product.category === category).length;
-  };
-
-  const getSizeCount = (size: string) => {
-    return products.filter((product) => product.size === size).length;
-  };
-
-  const getTagCount = (tag: string) => {
-    return products.filter((product) => product.tag === tag).length;
-  };
-
   const desktopFilters = (
     <div className="bg-gray-50 rounded-lg p-6 sticky top-24">
       <div className="flex items-center justify-between mb-6">
@@ -288,15 +218,14 @@ export default function FilterComponent({
         <Filter className="w-5 h-5" />
       </div>
 
-      {/* Active Filters & Clear */}
-      {getActiveFilterCount() > 0 && (
+      {countActive > 0 && (
         <div className="mb-6 p-3 bg-white rounded-lg border border-gray-200">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-semibold text-gray-700">
-              Active Filters ({getActiveFilterCount()})
+              Active Filters ({countActive})
             </span>
             <button
-              onClick={clearAllFilters}
+              onClick={clearAll}
               className="text-sm text-gray-500 hover:text-gray-700 underline"
             >
               Clear all
@@ -305,111 +234,95 @@ export default function FilterComponent({
         </div>
       )}
 
-      {/* Category Filter */}
       {categories.length > 0 && (
-        <FilterSection title="Category">
-          <div className="space-y-1">
-            {categories.map((category) => (
-              <FilterCheckbox
-                key={category}
-                label={category}
-                checked={filters.categories.includes(category)}
-                onChange={() => handleCategoryChange(category)}
-                count={getCategoryCount(category)}
-              />
-            ))}
-          </div>
-        </FilterSection>
-      )}
-
-      {/* Price Filter */}
-      <FilterSection title="Price Range">
-        <div className="space-y-1">
-          {priceRanges.map((range) => (
-            <FilterCheckbox
-              key={range.label}
-              label={range.label}
-              checked={filters.priceRanges.includes(range.label)}
-              onChange={() => handlePriceRangeChange(range.label)}
+        <Section title="Category">
+          {categories.map((cat) => (
+            <Checkbox
+              key={cat}
+              label={cat}
+              checked={filters.categories.includes(cat)}
+              onChange={() => handleCategoryChange(cat)}
+              count={getCount("category", cat)}
             />
           ))}
-        </div>
-      </FilterSection>
-
-      {/* Size Filter */}
-      {sizes.length > 0 && (
-        <FilterSection title="Size">
-          <div className="flex flex-wrap gap-2">
-            {sizes.map((size) => (
-              <FilterButton
-                key={size}
-                label={size}
-                selected={filters.sizes.includes(size)}
-                onClick={() => handleSizeChange(size)}
-                count={getSizeCount(size)}
-              />
-            ))}
-          </div>
-        </FilterSection>
+        </Section>
       )}
 
-      {/* Tag Filter */}
-      {tags.length > 0 && (
-        <FilterSection title="Tags">
-          <div className="space-y-1">
-            {tags.map((tag) => (
-              <FilterCheckbox
-                key={tag}
-                label={tag}
-                checked={filters.tags.includes(tag)}
-                onChange={() => handleTagChange(tag)}
-                count={getTagCount(tag)}
+      <Section title="Price Range">
+        {priceRanges.map((r) => (
+          <Checkbox
+            key={r.label}
+            label={r.label}
+            checked={filters.priceRanges.includes(r.label)}
+            onChange={() => toggleFilter("priceRanges", r.label)}
+          />
+        ))}
+      </Section>
+
+      {sizes.length > 0 && (
+        <Section title="Size">
+          <div className="flex flex-wrap gap-2">
+            {sizes.map((s) => (
+              <Button
+                key={s}
+                label={s}
+                selected={filters.sizes.includes(s)}
+                onClick={() => toggleFilter("sizes", s)}
+                count={getCount("size", s)}
               />
             ))}
           </div>
-        </FilterSection>
+        </Section>
+      )}
+
+      {tags.length > 0 && (
+        <Section title="Tags">
+          {tags.map((tag) => (
+            <Checkbox
+              key={tag}
+              label={tag}
+              checked={filters.tags.includes(tag)}
+              onChange={() => toggleFilter("tags", tag)}
+              count={getCount("tag", tag)}
+            />
+          ))}
+        </Section>
       )}
     </div>
   );
 
-  const mobileFilters = (
+  return (
     <>
-      {/* Mobile Filter Button */}
+      {/* Mobile Filters */}
       <button
-        onClick={() => setIsMobileFiltersOpen(true)}
+        onClick={() => setIsMobileOpen(true)}
         className="lg:hidden flex items-center gap-2 px-4 py-2 border-2 border-gray-200 rounded-lg hover:border-gray-900 transition-all"
       >
         <Filter className="w-4 h-4" />
         Filters
-        {getActiveFilterCount() > 0 && (
+        {countActive > 0 && (
           <span className="bg-gray-900 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-            {getActiveFilterCount()}
+            {countActive}
           </span>
         )}
       </button>
 
-      {/* Mobile Filter Overlay */}
-      {isMobileFiltersOpen && (
-        <div className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-end">
-          <div className="bg-white h-full w-80 max-w-full overflow-y-auto">
-            <div className="p-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h3 className="font-bold text-lg">Filters</h3>
-                <button
-                  onClick={() => setIsMobileFiltersOpen(false)}
-                  className="p-1 hover:bg-gray-100 rounded"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+      {isMobileOpen && (
+        <div className="lg:hidden fixed inset-0 bg-black/50 z-50 flex justify-end">
+          <div className="bg-white h-full w-80 overflow-y-auto">
+            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+              <h3 className="font-bold text-lg">Filters</h3>
+              <button
+                onClick={() => setIsMobileOpen(false)}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-
             <div className="p-4">
               {desktopFilters}
-
-              {/* Apply Filters Button for Mobile */}
               <button
-                onClick={() => setIsMobileFiltersOpen(false)}
+                onClick={() => setIsMobileOpen(false)}
                 className="w-full bg-gray-900 text-white py-3 rounded-lg font-semibold mt-4"
               >
                 Apply Filters
@@ -418,14 +331,7 @@ export default function FilterComponent({
           </div>
         </div>
       )}
-    </>
-  );
 
-  return (
-    <>
-      {mobileFilters}
-
-      {/* Desktop Filters */}
       <div className="hidden lg:block md:w-64 flex-shrink-0">
         {desktopFilters}
       </div>
