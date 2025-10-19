@@ -1,36 +1,63 @@
-import { Routes, Route } from "react-router-dom";
-import HomePage from "./home/_layout/HomePage";
-import LoginPage from "./account/login/Login";
-import RegisterPage from "./account/register/Register";
-import CartPage from "./cart/_layout/CartPage";
-import ContactPage from "./contact/_layout/ContactPage";
-import AboutPage from "./about/_layout/AboutPage";
-import CheckoutPage from "./checkout/_layout/CheckoutPage";
-import CollectionPage from "./collection/_layout/CollectionPage";
-import NewPage from "./new/_layout/NewPage";
-import FaqPage from "./faq/_layout/FaqPage";
-import FavoritesPage from "./favorites/_layout/FavoritesPage";
-import AppointmentPage from "./appointment/_layout/AppointmenPage";
-import NotFoundPage from "./notfound/_layout/NotFoundPage";
+import { useEffect } from "react";
+import { Routes, Route, Outlet, useLocation } from "react-router-dom";
+import { useUIStore } from "./stores/uiStore";
+import Navigation from "./components/layout/Navigation";
+import MobileMenu from "./components/layout/MobileMenu";
+import Footer from "./components/layout/Footer";
+import HomePage from "./pages/HomePage";
+import CartPage from "./pages/CartPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import FaqPage from "./pages/FaqPage";
+import ProductPage from "./pages/ProductPage";
+import CollectionPage from "./pages/CollectionPage";
+import ContactPage from "./pages/ContactPage";
+import FavoritesPage from "./pages/FavoritesPage";
+import ProfilePage from "./pages/ProfilePage";
+import AdminPage from "./pages/AdminPage";
+import CheckoutPage from "./pages/CheckoutPage";
 
-function App() {
+function MainLayout() {
+  const location = useLocation();
+  const { setScrolled } = useUIStore();
+  const isHome = location.pathname === "/";
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [setScrolled]);
+
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/cart" element={<CartPage />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/checkout" element={<CheckoutPage />} />
-      <Route path="/collections" element={<CollectionPage />} />
-      <Route path="/new" element={<NewPage />} />
-      <Route path="/faq" element={<FaqPage />} />
-      <Route path="/favorites" element={<FavoritesPage />} />
-      <Route path="/book-appointment" element={<AppointmentPage />} />
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+    <>
+      <Navigation />
+      <MobileMenu />
+      <Outlet />
+      {isHome && <Footer />}
+    </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Routes>
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/faq" element={<FaqPage />} />
+        <Route path="/product" element={<ProductPage />} />
+        <Route path="/collection" element={<CollectionPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/favorites" element={<FavoritesPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+      </Route>
+      <Route path="/*" element={<div>404 Page not Found</div>} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/admin" element={<AdminPage />} />
+    </Routes>
+  );
+}
