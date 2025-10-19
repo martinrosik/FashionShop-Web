@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { Product } from "../../types/types";
 
 interface SearchResultsProps {
@@ -15,54 +16,76 @@ export default function SearchResults({
   setCurrentPage,
   setShowSearch,
 }: SearchResultsProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Close search when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setShowSearch(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setShowSearch]);
+
   return (
-    <div className="mt-4 animate-fade-in">
+    <div ref={containerRef} className="relative mt-4 w-full max-w-md">
       <input
         type="text"
         placeholder="Search products..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="w-full px-6 py-3 rounded-lg border-2 border-gray-200 focus:border-gray-900 focus:outline-none text-gray-900"
+        className="w-full px-5 py-3 rounded-lg border border-gray-200 focus:border-gray-900 focus:outline-none text-gray-900 transition-all duration-200"
         autoFocus
       />
 
       {searchQuery && (
-        <div className="mt-2 bg-white rounded-lg shadow-xl max-h-96 overflow-y-auto">
+        <div className="mt-2 bg-white rounded-lg shadow-lg animate-fade-in-up">
           {filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                role="button"
-                tabIndex={0}
-                className="flex items-center gap-4 p-4 hover:bg-gray-50 cursor-pointer transition-colors"
-                onClick={() => {
-                  setCurrentPage("product");
-                  setShowSearch(false);
-                  setSearchQuery("");
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
+            <ul>
+              {filteredProducts.map((product) => (
+                <li
+                  key={product.id}
+                  role="button"
+                  tabIndex={0}
+                  className="flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-50 transition-colors duration-150"
+                  onClick={() => {
                     setCurrentPage("product");
                     setShowSearch(false);
                     setSearchQuery("");
-                  }
-                }}
-              >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-16 h-20 object-cover rounded"
-                />
-                <div>
-                  <h4 className="font-semibold text-gray-900">
-                    {product.name}
-                  </h4>
-                  <p className="text-gray-600">${product.price}</p>
-                </div>
-              </div>
-            ))
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      setCurrentPage("product");
+                      setShowSearch(false);
+                      setSearchQuery("");
+                    }
+                  }}
+                >
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-14 h-18 object-cover rounded-md"
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-gray-900 font-medium">
+                      {product.name}
+                    </span>
+                    <span className="text-gray-500 text-sm">
+                      ${product.price}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
           ) : (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-6 text-center text-gray-500 italic">
               No products found
             </div>
           )}

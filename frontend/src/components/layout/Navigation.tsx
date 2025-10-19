@@ -5,6 +5,14 @@ import { useUIStore } from "../../stores/uiStore";
 import { useCartStore } from "../../stores/cartStore";
 import { allProducts } from "../../data/products";
 import type { Product } from "../../types/types";
+import { useState, useEffect } from "react";
+
+const NAV_LINKS = [
+  { name: "Home", path: "/" },
+  { name: "Collection", path: "/collection" },
+  { name: "Contact", path: "/contact" },
+  { name: "FAQ", path: "/faq" },
+];
 
 export default function Navigation() {
   const navigate = useNavigate();
@@ -22,11 +30,30 @@ export default function Navigation() {
   } = useUIStore();
   const { cartItems } = useCartStore();
 
+  const [isSearchDisabled, setIsSearchDisabled] = useState(false);
+
   const filteredProducts: Product[] = allProducts.filter((product) =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const navbarSolid = scrolled || !isHome;
+  const iconColor = navbarSolid ? "text-gray-700" : "text-white";
+  const linkColor = navbarSolid
+    ? "text-gray-700 hover:text-gray-900"
+    : "text-white/90 hover:text-white";
+
+  // Prevent spamming search icon
+  const toggleSearch = () => {
+    if (isSearchDisabled) return;
+    setShowSearch(!showSearch);
+    setIsSearchDisabled(true);
+    setTimeout(() => setIsSearchDisabled(false), 300); // debounce 300ms
+  };
+
+  // Optional: close search when navigating
+  useEffect(() => {
+    setShowSearch(false);
+  }, [location.pathname, setShowSearch]);
 
   return (
     <nav
@@ -36,99 +63,111 @@ export default function Navigation() {
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold tracking-tight">
-            <span
-              className={`transition-colors duration-300 ${
-                navbarSolid ? "text-gray-900" : "text-white"
-              }`}
-            >
-              LUXE
-            </span>
-          </Link>
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between relative">
+        {/* Logo */}
+        <Link to="/" className="text-2xl font-bold tracking-tight z-50">
+          <span
+            className={`transition-colors duration-300 ${
+              navbarSolid ? "text-gray-900" : "text-white"
+            }`}
+          >
+            LUXE
+          </span>
+        </Link>
 
-          <div className="hidden md:flex space-x-8">
-            {[
-              { name: "Home", path: "/" },
-              { name: "Collection", path: "/collection" },
-              { name: "Contact", path: "/contact" },
-              { name: "FAQ", path: "/faq" },
-            ].map((item) => (
+        {/* Desktop Links */}
+        <div className="hidden md:flex space-x-8">
+          {NAV_LINKS.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className={`transition-colors duration-200 font-medium ${linkColor}`}
+            >
+              {item.name}
+            </Link>
+          ))}
+        </div>
+
+        {/* Right Icons */}
+        <div className="flex items-center space-x-4 z-50">
+          {/* Search */}
+          <div className="relative">
+            <Search
+              className={`w-5 h-5 cursor-pointer transition-transform duration-200 ${iconColor} hover:scale-110`}
+              onClick={toggleSearch}
+            />
+            {/* Search Overlay */}
+            {showSearch && (
+              <>
+                {/* Dimmed background */}
+                <div
+                  className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
+                  onClick={() => setShowSearch(false)}
+                />
+                <div className="absolute right-0 mt-2 w-screen max-w-md md:max-w-lg bg-white rounded-xl shadow-2xl p-4 animate-fade-in-up z-50">
+                  <SearchResults
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    filteredProducts={filteredProducts}
+                    setShowSearch={setShowSearch}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Favorites */}
+          <Heart
+            className={`w-5 h-5 cursor-pointer transition-transform duration-200 ${iconColor} hover:scale-110`}
+            onClick={() => navigate("/favorites")}
+          />
+          {/* User */}
+          <User
+            className={`w-5 h-5 cursor-pointer transition-transform duration-200 ${iconColor} hover:scale-110`}
+            onClick={() => navigate("/profile")}
+          />
+          {/* Cart */}
+          <div
+            className="relative cursor-pointer"
+            onClick={() => navigate("/cart")}
+          >
+            <ShoppingBag
+              className={`w-5 h-5 transition-transform duration-200 ${iconColor} hover:scale-110`}
+            />
+            {cartItems.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-rose-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {cartItems.length}
+              </span>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden"
+          >
+            {isMenuOpen ? (
+              <X className={`w-6 h-6 ${iconColor}`} />
+            ) : (
+              <Menu className={`w-6 h-6 ${iconColor}`} />
+            )}
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="absolute top-full left-0 w-full bg-white shadow-lg md:hidden animate-slide-down">
+            {NAV_LINKS.map((item) => (
               <Link
                 key={item.name}
                 to={item.path}
-                className={`transition-colors duration-200 font-medium ${
-                  navbarSolid
-                    ? "text-gray-700 hover:text-gray-900"
-                    : "text-white/90 hover:text-white"
-                }`}
+                className="block px-6 py-4 text-gray-700 font-medium border-b border-gray-200"
+                onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
           </div>
-
-          <div className="flex items-center space-x-4">
-            <Search
-              className={`w-5 h-5 cursor-pointer transition-colors duration-300 ${
-                navbarSolid ? "text-gray-700" : "text-white"
-              }`}
-              onClick={() => setShowSearch(!showSearch)}
-            />
-            <Heart
-              className={`w-5 h-5 cursor-pointer transition-colors duration-300 ${
-                navbarSolid ? "text-gray-700" : "text-white"
-              }`}
-              onClick={() => navigate("/favorites")}
-            />
-            <User
-              className={`w-5 h-5 cursor-pointer transition-colors duration-300 ${
-                navbarSolid ? "text-gray-700" : "text-white"
-              }`}
-              onClick={() => navigate("/profile")}
-            />
-            <div
-              className="relative cursor-pointer"
-              onClick={() => navigate("/cart")}
-            >
-              <ShoppingBag
-                className={`w-5 h-5 transition-colors duration-300 ${
-                  navbarSolid ? "text-gray-700" : "text-white"
-                }`}
-              />
-              <span className="absolute -top-2 -right-2 bg-rose-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {cartItems.length}
-              </span>
-            </div>
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden"
-            >
-              {isMenuOpen ? (
-                <X
-                  className={`w-6 h-6 ${
-                    navbarSolid ? "text-gray-700" : "text-white"
-                  }`}
-                />
-              ) : (
-                <Menu
-                  className={`w-6 h-6 ${
-                    navbarSolid ? "text-gray-700" : "text-white"
-                  }`}
-                />
-              )}
-            </button>
-          </div>
-        </div>
-
-        {showSearch && (
-          <SearchResults
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            filteredProducts={filteredProducts}
-            setShowSearch={setShowSearch}
-          />
         )}
       </div>
     </nav>
