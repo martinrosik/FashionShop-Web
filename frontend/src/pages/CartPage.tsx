@@ -30,7 +30,7 @@ export default function CartPage() {
             <div className="lg:col-span-2 space-y-4">
               {cartItems.map((item) => (
                 <div
-                  key={item.id}
+                  key={`${item.id}-${item.size}`}
                   className="bg-white rounded-lg p-6 flex gap-6"
                 >
                   <img
@@ -43,7 +43,7 @@ export default function CartPage() {
                     <div className="flex justify-between mb-2">
                       <h3 className="text-xl font-semibold">{item.name}</h3>
                       <button
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item.id, item.size)}
                         className="text-gray-400 hover:text-red-600 transition-colors"
                         aria-label={`Remove ${item.name} from cart`}
                       >
@@ -56,7 +56,7 @@ export default function CartPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 bg-gray-100 rounded-lg px-4 py-2">
                         <button
-                          onClick={() => updateQuantity(item.id, -1)}
+                          onClick={() => updateQuantity(item.id, item.size, -1)}
                           className="hover:text-gray-600"
                           aria-label="Decrease quantity"
                         >
@@ -66,7 +66,7 @@ export default function CartPage() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.id, 1)}
+                          onClick={() => updateQuantity(item.id, item.size, 1)}
                           className="hover:text-gray-600"
                           aria-label="Increase quantity"
                         >

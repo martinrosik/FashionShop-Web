@@ -15,7 +15,6 @@ export default function CollectionPage() {
   const [sortBy, setSortBy] = useState("featured");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Apply sorting
   const sortProducts = (data: Product[], method: string): Product[] => {
     const sorted = [...data];
     switch (method) {

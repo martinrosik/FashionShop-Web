@@ -1,4 +1,3 @@
-// pages/FavoritesPage.tsx
 import { useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { useFavoritesStore } from "../stores/favoritesStore";
