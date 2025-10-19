@@ -11,11 +11,13 @@ import {
 interface SidebarProps {
   currentPage: string;
   setCurrentPage: (page: string) => void;
+  onLogoutClick: () => void;
 }
 
 export default function SidebarComponent({
   currentPage,
   setCurrentPage,
+  onLogoutClick,
 }: SidebarProps) {
   const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, page: "dashboard" },
@@ -49,7 +51,10 @@ export default function SidebarComponent({
         ))}
       </nav>
       <div className="absolute bottom-0 left-0 right-0 p-4">
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-all">
+        <button
+          onClick={onLogoutClick}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-all"
+        >
           <LogOut className="w-5 h-5" />
           <span className="font-medium">Logout</span>
         </button>

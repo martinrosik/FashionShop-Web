@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { X, Reply, Check, Archive } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, Reply, Check, Archive, Trash2 } from "lucide-react";
 import type { Message } from "../../../pages/AdminPage";
 
 interface MessageDetailModalProps {
@@ -17,12 +17,19 @@ export default function MessageDetailModal({
 }: MessageDetailModalProps) {
   const [replyText, setReplyText] = useState("");
   const [isReplying, setIsReplying] = useState(false);
+  const [localStatus, setLocalStatus] = useState(message.status);
+
+  // Sync localStatus if message prop changes
+  useEffect(() => {
+    setLocalStatus(message.status);
+  }, [message.status]);
 
   const handleReply = () => {
     if (replyText.trim() && onReply) {
       onReply(message.id, replyText);
       setReplyText("");
       setIsReplying(false);
+      setLocalStatus("Replied");
       if (onUpdateStatus) {
         onUpdateStatus(message.id, "Replied");
       }
@@ -30,16 +37,21 @@ export default function MessageDetailModal({
   };
 
   const handleUpdateStatus = (newStatus: string) => {
+    setLocalStatus(newStatus);
     if (onUpdateStatus) {
       onUpdateStatus(message.id, newStatus);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <div className="relative bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white z-10">
           <div>
             <h2 className="text-2xl font-bold">{message.subject}</h2>
             <p className="text-gray-500 text-sm mt-1">From: {message.name}</p>
@@ -52,89 +64,57 @@ export default function MessageDetailModal({
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
-          {/* Message Header */}
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                {message.name.charAt(0)}
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">{message.name}</h3>
-                <p className="text-gray-600">{message.email}</p>
-                <p className="text-sm text-gray-500 mt-1">{message.date}</p>
-              </div>
+        {/* Scrollable Content */}
+        <div className="p-6 overflow-y-auto space-y-6 flex-1">
+          {/* Sender Info */}
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center text-white font-bold text-lg">
+              {message.name.charAt(0)}
             </div>
-            <div className="text-right">
-              <div className="flex items-center gap-2 mb-3">
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                    message.status === "Unread"
-                      ? "bg-blue-100 text-blue-700"
-                      : message.status === "Replied"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  {message.status}
-                </span>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleUpdateStatus("Replied")}
-                  className="flex items-center gap-2 px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm"
-                >
-                  <Check className="w-4 h-4" />
-                  Mark Replied
-                </button>
-                <button
-                  onClick={() => handleUpdateStatus("Archived")}
-                  className="flex items-center gap-2 px-3 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm"
-                >
-                  <Archive className="w-4 h-4" />
-                  Archive
-                </button>
-              </div>
+            <div>
+              <h3 className="font-semibold text-lg">{message.name}</h3>
+              <p className="text-gray-600">{message.email}</p>
+              <p className="text-sm text-gray-500 mt-1">{message.date}</p>
             </div>
+            <span
+              className={`ml-auto px-3 py-1 rounded-full text-sm font-semibold ${
+                localStatus === "Unread"
+                  ? "bg-blue-100 text-blue-700"
+                  : localStatus === "Replied"
+                  ? "bg-green-100 text-green-700"
+                  : localStatus === "Archived"
+                  ? "bg-gray-100 text-gray-700"
+                  : "bg-gray-100 text-gray-700"
+              }`}
+            >
+              {localStatus}
+            </span>
           </div>
 
           {/* Message Content */}
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h4 className="font-semibold mb-4 text-lg">Message:</h4>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-              {message.message}
-            </p>
+          <div className="bg-gray-50 rounded-xl p-6 text-gray-700 leading-relaxed whitespace-pre-wrap">
+            {message.message}
           </div>
 
           {/* Reply Section */}
-          <div className="border-t pt-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-lg">Reply</h3>
-              {!isReplying && (
-                <button
-                  onClick={() => setIsReplying(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                >
-                  <Reply className="w-4 h-4" />
-                  Reply to Message
-                </button>
-              )}
-            </div>
-
-            {isReplying && (
+          <div className="space-y-4">
+            {!isReplying ? (
+              <button
+                onClick={() => setIsReplying(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-semibold"
+              >
+                <Reply className="w-4 h-4" />
+                Reply to Message
+              </button>
+            ) : (
               <div className="space-y-4">
-                <div>
-                  <label className="block font-medium mb-2 text-sm">
-                    Your Reply
-                  </label>
-                  <textarea
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    rows={6}
-                    placeholder="Type your reply here..."
-                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none resize-none"
-                  />
-                </div>
+                <textarea
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  rows={5}
+                  placeholder="Type your reply..."
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:outline-none resize-none"
+                />
                 <div className="flex gap-4">
                   <button
                     onClick={() => {
@@ -155,45 +135,59 @@ export default function MessageDetailModal({
                 </div>
               </div>
             )}
-
-            {/* Previous Replies */}
-            {message.status === "Replied" && (
-              <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
-                <div className="flex items-center gap-2 text-green-700 mb-2">
-                  <Check className="w-4 h-4" />
-                  <span className="font-semibold">Replied</span>
-                </div>
-                <p className="text-green-600 text-sm">
-                  You have already replied to this message.
-                </p>
-              </div>
-            )}
           </div>
 
           {/* Quick Actions */}
-          <div className="border-t pt-6">
-            <h4 className="font-semibold mb-4">Quick Actions</h4>
-            <div className="flex gap-3 flex-wrap">
+          <div className="pt-4 border-t border-gray-200">
+            <h4 className="font-semibold mb-3">Quick Actions</h4>
+            <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => handleUpdateStatus("Unread")}
-                className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium"
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  localStatus === "Unread"
+                    ? "bg-blue-200 text-blue-800"
+                    : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                }`}
               >
+                <Check className="w-4 h-4" />
                 Mark as Unread
               </button>
               <button
                 onClick={() => handleUpdateStatus("Read")}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  localStatus === "Read"
+                    ? "bg-gray-300 text-gray-900"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
               >
+                <Check className="w-4 h-4" />
                 Mark as Read
               </button>
               <button
                 onClick={() => handleUpdateStatus("Replied")}
-                className="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm font-medium"
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  localStatus === "Replied"
+                    ? "bg-green-200 text-green-800"
+                    : "bg-green-100 text-green-700 hover:bg-green-200"
+                }`}
               >
+                <Check className="w-4 h-4" />
                 Mark as Replied
               </button>
-              <button className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium">
-                Delete Message
+              <button
+                onClick={() => handleUpdateStatus("Archived")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  localStatus === "Archived"
+                    ? "bg-gray-300 text-gray-900"
+                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                }`}
+              >
+                <Archive className="w-4 h-4" />
+                Archive
+              </button>
+              <button className="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium">
+                <Trash2 className="w-4 h-4" />
+                Delete
               </button>
             </div>
           </div>

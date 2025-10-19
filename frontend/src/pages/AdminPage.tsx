@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SidebarComponent from "../components/adminPanel/SideBarComponent";
+import SidebarComponent from "../components/adminPanel/SidebarComponent";
 import TopBarComponent from "../components/adminPanel/TopBarComponent";
 import DashboardPage from "../components/adminPanel/DashboardPage";
 import ProductsPage from "../components/adminPanel/ProductsPage";
@@ -10,6 +10,8 @@ import SettingsPage from "../components/adminPanel/SettingsPage";
 import AddProductModal from "../components/adminPanel/modals/AddProductModal";
 import EditProductModal from "../components/adminPanel/modals/EditProductModal";
 import OrderDetailModal from "../components/adminPanel/modals/OrderDetailModal";
+import LogoutModal from "../components/adminPanel/modals/LogoutModal";
+import { useNavigate } from "react-router";
 
 // Types
 export interface Product {
@@ -66,6 +68,11 @@ export default function AdminPage() {
     editProduct: null,
     orderDetail: null,
   });
+
+  // Logout Modal State
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const navigate = useNavigate();
 
   // Mock Data
   const [products, setProducts] = useState<Product[]>([
@@ -145,33 +152,6 @@ export default function AdminPage() {
       items: 1,
       email: "james@email.com",
     },
-    {
-      id: "#12343",
-      customer: "Olivia Brown",
-      date: "2025-10-16",
-      status: "Delivered",
-      total: 459,
-      items: 2,
-      email: "olivia@email.com",
-    },
-    {
-      id: "#12342",
-      customer: "Noah Davis",
-      date: "2025-10-15",
-      status: "Processing",
-      total: 638,
-      items: 4,
-      email: "noah@email.com",
-    },
-    {
-      id: "#12341",
-      customer: "Ava Garcia",
-      date: "2025-10-14",
-      status: "Delivered",
-      total: 189,
-      items: 1,
-      email: "ava@email.com",
-    },
   ]);
 
   const [customers, setCustomers] = useState<Customer[]>([
@@ -183,42 +163,6 @@ export default function AdminPage() {
       spent: 3450,
       joined: "2024-03-15",
       status: "Active",
-    },
-    {
-      id: 2,
-      name: "James Smith",
-      email: "james@email.com",
-      orders: 8,
-      spent: 2340,
-      joined: "2024-05-20",
-      status: "Active",
-    },
-    {
-      id: 3,
-      name: "Olivia Brown",
-      email: "olivia@email.com",
-      orders: 15,
-      spent: 4670,
-      joined: "2024-01-10",
-      status: "VIP",
-    },
-    {
-      id: 4,
-      name: "Noah Davis",
-      email: "noah@email.com",
-      orders: 5,
-      spent: 1890,
-      joined: "2024-08-05",
-      status: "Active",
-    },
-    {
-      id: 5,
-      name: "Ava Garcia",
-      email: "ava@email.com",
-      orders: 20,
-      spent: 6780,
-      joined: "2023-11-22",
-      status: "VIP",
     },
   ]);
 
@@ -232,24 +176,6 @@ export default function AdminPage() {
       status: "Unread",
       message:
         "Hi, I would like to know more about the sizing for the silk dress...",
-    },
-    {
-      id: 2,
-      name: "Michael Lee",
-      email: "michael@email.com",
-      subject: "Order delivery inquiry",
-      date: "5 hours ago",
-      status: "Read",
-      message: "When will my order #12340 be delivered? It has been 5 days...",
-    },
-    {
-      id: 3,
-      name: "Emily Chen",
-      email: "emily@email.com",
-      subject: "Product availability",
-      date: "1 day ago",
-      status: "Replied",
-      message: "Is the leather jacket available in size XS?",
     },
   ]);
 
@@ -300,6 +226,7 @@ export default function AdminPage() {
       <SidebarComponent
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        onLogoutClick={() => setShowLogoutModal(true)}
       />
       <TopBarComponent />
       <div className="ml-64 pt-20 p-8">{pages[currentPage]}</div>
@@ -326,6 +253,18 @@ export default function AdminPage() {
           setShowOrderDetail={() =>
             setModalState((prev) => ({ ...prev, orderDetail: null }))
           }
+        />
+      )}
+
+      {/* Logout Modal */}
+      {showLogoutModal && (
+        <LogoutModal
+          isOpen={showLogoutModal}
+          onClose={() => setShowLogoutModal(false)}
+          onConfirm={() => {
+            setShowLogoutModal(false);
+            navigate("/login");
+          }}
         />
       )}
     </div>

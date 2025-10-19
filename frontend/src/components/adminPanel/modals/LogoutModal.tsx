@@ -15,7 +15,7 @@ export default function LogoutModal({
     <div
       className="fixed inset-0 flex items-center justify-center p-4 z-50
                  bg-black/50 backdrop-blur-sm"
-      onClick={onClose} // Clicking outside closes modal
+      onClick={onClose} // Click outside closes modal
     >
       <div
         className="bg-white rounded-lg max-w-sm w-full shadow-lg"

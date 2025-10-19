@@ -42,15 +42,14 @@ export default function Navigation() {
     ? "text-gray-700 hover:text-gray-900"
     : "text-white/90 hover:text-white";
 
-  // Prevent spamming search icon
   const toggleSearch = () => {
     if (isSearchDisabled) return;
     setShowSearch(!showSearch);
     setIsSearchDisabled(true);
-    setTimeout(() => setIsSearchDisabled(false), 300); // debounce 300ms
+    setTimeout(() => setIsSearchDisabled(false), 300); // debounce
   };
 
-  // Optional: close search when navigating
+  // Close search when navigating
   useEffect(() => {
     setShowSearch(false);
   }, [location.pathname, setShowSearch]);
@@ -59,7 +58,7 @@ export default function Navigation() {
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${
         navbarSolid
-          ? "bg-white/95 backdrop-blur-md shadow-lg"
+          ? "bg-white/95 backdrop-blur-none shadow-lg"
           : "bg-transparent"
       }`}
     >
@@ -96,23 +95,15 @@ export default function Navigation() {
               className={`w-5 h-5 cursor-pointer transition-transform duration-200 ${iconColor} hover:scale-110`}
               onClick={toggleSearch}
             />
-            {/* Search Overlay */}
             {showSearch && (
-              <>
-                {/* Dimmed background */}
-                <div
-                  className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
-                  onClick={() => setShowSearch(false)}
+              <div className="absolute right-0 mt-2 w-screen max-w-md md:max-w-lg bg-white rounded-xl shadow-2xl p-4 animate-slide-down z-50 border border-gray-100">
+                <SearchResults
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  filteredProducts={filteredProducts}
+                  setShowSearch={setShowSearch}
                 />
-                <div className="absolute right-0 mt-2 w-screen max-w-md md:max-w-lg bg-white rounded-xl shadow-2xl p-4 animate-fade-in-up z-50">
-                  <SearchResults
-                    searchQuery={searchQuery}
-                    setSearchQuery={setSearchQuery}
-                    filteredProducts={filteredProducts}
-                    setShowSearch={setShowSearch}
-                  />
-                </div>
-              </>
+              </div>
             )}
           </div>
 
