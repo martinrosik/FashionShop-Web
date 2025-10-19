@@ -12,7 +12,7 @@ import type {
   PaymentMethod,
   Settings,
   Order,
-} from "../types/index.ts";
+} from "../types/types.ts";
 
 export default function ProfilePage() {
   const navigate = useNavigate();

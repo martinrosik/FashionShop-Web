@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import type { Settings } from "../../../types";
+import type { Settings } from "../../../types/types";
 
 interface SettingsModalProps {
   isOpen: boolean;

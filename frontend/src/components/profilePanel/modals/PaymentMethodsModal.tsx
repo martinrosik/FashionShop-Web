@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import type { PaymentMethod } from "../../../types";
+import type { PaymentMethod } from "../../../types/types";
 
 interface PaymentMethodsModalProps {
   isOpen: boolean;

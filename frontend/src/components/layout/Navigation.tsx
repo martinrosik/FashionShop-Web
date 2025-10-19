@@ -4,7 +4,7 @@ import SearchResults from "../ui/SearchResults";
 import { useUIStore } from "../../stores/uiStore";
 import { useCartStore } from "../../stores/cartStore";
 import { allProducts } from "../../data/products";
-import type { Product } from "../../types";
+import type { Product } from "../../types/types";
 
 export default function Navigation() {
   const navigate = useNavigate();

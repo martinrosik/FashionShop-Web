@@ -1,5 +1,5 @@
 import { Heart } from "lucide-react";
-import type { Product } from "../../types";
+import type { Product } from "../../types/types";
 
 interface ProductCardProps {
   product: Product;

@@ -1,4 +1,4 @@
-import type { Category } from "../../types";
+import type { Category } from "../../types/types";
 
 interface CategoryCardProps {
   category: Category;

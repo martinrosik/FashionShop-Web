@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CreditCard, Lock, ArrowLeft } from "lucide-react";
 import { useCartStore } from "../stores/cartStore";
-import type { CartItem } from "../types";
+import type { CartItem } from "../types/types";
 
 interface CheckoutForm {
   email: string;

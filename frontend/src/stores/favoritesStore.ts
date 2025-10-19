@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Product } from "../types";
+import type { Product } from "../types/types";
 
 interface FavoritesState {
   favorites: Product[];
