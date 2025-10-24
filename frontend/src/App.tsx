@@ -1,5 +1,12 @@
 import { useEffect } from "react";
-import { Routes, Route, Outlet, useLocation } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Outlet,
+  useLocation,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import { useUIStore } from "./_shared/stores/uiStore.ts";
 import Navigation from "./components/layout/Navigation";
 import MobileMenu from "./components/layout/MobileMenu";
@@ -54,7 +61,7 @@ export default function App() {
         <Route path="/favorites" element={<FavoritesPage />} />
         <Route path="/profile" element={<ProfilePage />} />
       </Route>
-      <Route path="/*" element={<div>404 Page not Found</div>} />
+      <Route path="/*" element={<Navigate to="/" />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/admin" element={<AdminPage />} />

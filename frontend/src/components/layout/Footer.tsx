@@ -20,14 +20,20 @@ export default function Footer() {
               </Link>
             </li>
             <li>
-              <a href="#" className="hover:text-white transition-colors">
+              <Link
+                to="/collection"
+                className="hover:text-white transition-colors"
+              >
                 Best Sellers
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#" className="hover:text-white transition-colors">
+              <Link
+                to="/collection"
+                className="hover:text-white transition-colors"
+              >
                 Sale
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
@@ -48,9 +54,9 @@ export default function Footer() {
               </Link>
             </li>
             <li>
-              <a href="#" className="hover:text-white transition-colors">
+              <Link to="/faq" className="hover:text-white transition-colors">
                 Shipping
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
