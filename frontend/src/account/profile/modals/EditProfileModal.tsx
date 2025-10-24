@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import type { UserData } from "../../../types/types";
+import type { UserData } from "../../../_shared/types/types";
 
 interface EditProfileModalProps {
   isOpen: boolean;

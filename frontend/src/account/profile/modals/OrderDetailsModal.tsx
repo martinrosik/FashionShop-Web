@@ -1,4 +1,4 @@
-import type { Order, OrderItem } from "../../../types/types";
+import type { Order, OrderItem } from "../../../_shared/types/types";
 
 interface OrderDetailsModalProps {
   isOpen: boolean;

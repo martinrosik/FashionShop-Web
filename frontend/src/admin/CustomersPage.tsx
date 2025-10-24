@@ -1,5 +1,5 @@
 import { Eye, MessageSquare } from "lucide-react";
-import type { Customer } from "../../pages/AdminPage";
+import type { Customer } from "./AdminPage";
 
 interface CustomersPageProps {
   customers: Customer[];

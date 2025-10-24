@@ -1,10 +1,10 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ShoppingBag, Menu, X, Search, Heart, User } from "lucide-react";
 import SearchResults from "../ui/SearchResults";
-import { useUIStore } from "../../stores/uiStore";
-import { useCartStore } from "../../stores/cartStore";
+import { useUIStore } from "../../_shared/stores/uiStore.ts";
+import { useCartStore } from "../../_shared/stores/cartStore";
 import { allProducts } from "../../data/products";
-import type { Product } from "../../types/types";
+import type { Product } from "../../_shared/types/types.ts";
 import { useState, useEffect } from "react";
 
 const NAV_LINKS = [

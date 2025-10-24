@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import type { Product } from "../../types/types";
+import type { Product } from "../../_shared/types/types";
 
 interface SearchResultsProps {
   searchQuery: string;

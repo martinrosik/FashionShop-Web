@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import type { FaqItem as FaqType } from "../../types/types";
+import type { FaqItem as FaqType } from "../../_shared/types/types";
 
 interface FaqItemProps {
   faq: FaqType;

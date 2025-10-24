@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useUIStore } from "../../stores/uiStore";
+import { useUIStore } from "../../_shared/stores/uiStore.ts";
 
 export default function MobileMenu() {
   const { isMenuOpen, setIsMenuOpen } = useUIStore();

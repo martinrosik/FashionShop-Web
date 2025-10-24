@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { CreditCard, Lock, ArrowLeft } from "lucide-react";
-import { useCartStore } from "../stores/cartStore";
-import type { CartItem } from "../types/types";
+import { useCartStore } from "../_shared/stores/cartStore.ts";
+import type { CartItem } from "../_shared/types/types.ts";
 
 interface CheckoutForm {
   email: string;

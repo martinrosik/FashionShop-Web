@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
-import { useFavoritesStore } from "../stores/favoritesStore";
+import { useFavoritesStore } from "../_shared/stores/favoritesStore.ts";
 import ProductCard from "../components/ui/ProductCard";
 
 export default function FavoritesPage() {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Search, Bell } from "lucide-react";
-import NotificationsModal from "../adminPanel/modals/NotificationsModal";
+import NotificationsModal from "./modals/NotificationsModal";
 
 const mockNotifications = [
   {

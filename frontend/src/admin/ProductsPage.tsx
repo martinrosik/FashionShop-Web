@@ -1,5 +1,5 @@
 import { Plus, Eye, Edit, Trash2 } from "lucide-react";
-import type { Product } from "../../pages/AdminPage";
+import type { Product } from "./AdminPage";
 
 interface ProductsPageProps {
   products: Product[];

@@ -1,21 +1,21 @@
 import { useEffect } from "react";
 import { Routes, Route, Outlet, useLocation } from "react-router-dom";
-import { useUIStore } from "./stores/uiStore";
+import { useUIStore } from "./_shared/stores/uiStore.ts";
 import Navigation from "./components/layout/Navigation";
 import MobileMenu from "./components/layout/MobileMenu";
 import Footer from "./components/layout/Footer";
-import HomePage from "./pages/HomePage";
-import CartPage from "./pages/CartPage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import FaqPage from "./pages/FaqPage";
-import ProductPage from "./pages/ProductPage";
-import CollectionPage from "./pages/CollectionPage";
-import ContactPage from "./pages/ContactPage";
-import FavoritesPage from "./pages/FavoritesPage";
-import ProfilePage from "./pages/ProfilePage";
-import AdminPage from "./pages/AdminPage";
-import CheckoutPage from "./pages/CheckoutPage";
+import HomePage from "./home/HomePage";
+import CartPage from "./cart/CartPage";
+import LoginPage from "./account/login/LoginPage.tsx";
+import RegisterPage from "./account/register/RegisterPage.tsx";
+import FaqPage from "./faq/FaqPage";
+import ProductPage from "./product/ProductPage";
+import CollectionPage from "./collection/CollectionPage";
+import ContactPage from "./contact/ContactPage";
+import FavoritesPage from "./favorites/FavoritesPage";
+import ProfilePage from "./account/profile/ProfilePage";
+import AdminPage from "./admin/AdminPage";
+import CheckoutPage from "./checkout/CheckoutPage";
 
 function MainLayout() {
   const location = useLocation();

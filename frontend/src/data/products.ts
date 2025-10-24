@@ -1,4 +1,4 @@
-import type { Product, HeroSlide, FaqItem } from "../types/types";
+import type { Product, HeroSlide, FaqItem } from "../_shared/types/types";
 
 export const allProducts: Product[] = [
   {

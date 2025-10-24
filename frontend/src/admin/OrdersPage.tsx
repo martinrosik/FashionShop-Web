@@ -1,5 +1,5 @@
 import { Eye } from "lucide-react";
-import type { Order } from "../../pages/AdminPage";
+import type { Order } from "./AdminPage";
 
 interface OrdersPageProps {
   orders: Order[];

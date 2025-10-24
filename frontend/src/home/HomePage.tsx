@@ -4,7 +4,7 @@ import { ChevronRight } from "lucide-react";
 import CategoryCard from "../components/ui/CategoryCard";
 import ProductCard from "../components/ui/ProductCard";
 import { heroSlides, allProducts } from "../data/products";
-import type { Category } from "../types/types";
+import type { Category } from "../_shared/types/types";
 
 export default function HomePage() {
   const navigate = useNavigate();

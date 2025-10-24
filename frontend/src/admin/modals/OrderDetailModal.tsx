@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import type { Order } from "../../../pages/AdminPage";
+import type { Order } from "../../../admin/AdminPage";
 
 interface OrderDetailModalProps {
   order: Order;

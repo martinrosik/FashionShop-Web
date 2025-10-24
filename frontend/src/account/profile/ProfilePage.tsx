@@ -1,18 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import EditProfileModal from "../components/profilePanel/modals/EditProfileModal";
-import AddressesModal from "../components/profilePanel/modals/AddressesModal";
-import PaymentMethodsModal from "../components/profilePanel/modals/PaymentMethodsModal";
-import SettingsModal from "../components/profilePanel/modals/SettingsModal";
-import OrderDetailsModal from "../components/profilePanel/modals/OrderDetailsModal";
-import LogoutModal from "../components/profilePanel/modals/LogoutModal";
+import EditProfileModal from "./modals/EditProfileModal.tsx";
+import AddressesModal from "./modals/AddressesModal.tsx";
+import PaymentMethodsModal from "./modals/PaymentMethodsModal.tsx";
+import SettingsModal from "./modals/SettingsModal.tsx";
+import OrderDetailsModal from "./modals/OrderDetailsModal.tsx";
+import LogoutModal from "./modals/LogoutModal.tsx";
 import type {
   UserData,
   Address,
   PaymentMethod,
   Settings,
   Order,
-} from "../types/types.ts";
+} from "../../_shared/types/types.ts";
 
 export default function ProfilePage() {
   const navigate = useNavigate();

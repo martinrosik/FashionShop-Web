@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import ProductCard from "../components/ui/ProductCard";
 import FilterComponent from "../components/layout/FilterComponent";
 import { allProducts } from "../data/products";
-import type { Product } from "../types/types.ts";
+import type { Product } from "../_shared/types/types.ts";
 import { Search } from "lucide-react";
 
 export default function CollectionPage() {

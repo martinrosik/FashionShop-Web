@@ -1,5 +1,5 @@
 import { DollarSign, ShoppingBag, Package, Users } from "lucide-react";
-import type { Product, Order } from "../../pages/AdminPage";
+import type { Product, Order } from "./AdminPage";
 
 interface DashboardPageProps {
   products: Product[];

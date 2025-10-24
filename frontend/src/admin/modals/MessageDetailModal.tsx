@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, Reply, Check, Archive, Trash2 } from "lucide-react";
-import type { Message } from "../../../pages/AdminPage";
+import type { Message } from "../../../admin/AdminPage";
 
 interface MessageDetailModalProps {
   message: Message;

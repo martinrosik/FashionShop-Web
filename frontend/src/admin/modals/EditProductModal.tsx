@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import type { Product } from "../../../pages/AdminPage";
+import type { Product } from "../../../admin/AdminPage";
 
 interface EditProductModalProps {
   product: Product;

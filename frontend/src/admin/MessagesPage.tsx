@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { Message } from "../../pages/AdminPage";
-import MessageDetailModal from "../adminPanel/modals/MessageDetailModal";
+import type { Message } from "./AdminPage";
+import MessageDetailModal from "./modals/MessageDetailModal";
 
 interface MessagesPageProps {
   messages: Message[];

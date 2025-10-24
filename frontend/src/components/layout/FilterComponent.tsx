@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Filter, X } from "lucide-react";
-import type { Product } from "../../types/types.ts";
+import type { Product } from "../../_shared/types/types.ts";
 
 interface FilterState {
   categories: string[];

@@ -1,16 +1,16 @@
 import { useState } from "react";
-import SidebarComponent from "../components/adminPanel/SidebarComponent";
-import TopBarComponent from "../components/adminPanel/TopBarComponent";
-import DashboardPage from "../components/adminPanel/DashboardPage";
-import ProductsPage from "../components/adminPanel/ProductsPage";
-import OrdersPage from "../components/adminPanel/OrdersPage";
-import CustomersPage from "../components/adminPanel/CustomersPage";
-import MessagesPage from "../components/adminPanel/MessagesPage";
-import SettingsPage from "../components/adminPanel/SettingsPage";
-import AddProductModal from "../components/adminPanel/modals/AddProductModal";
-import EditProductModal from "../components/adminPanel/modals/EditProductModal";
-import OrderDetailModal from "../components/adminPanel/modals/OrderDetailModal";
-import LogoutModal from "../components/adminPanel/modals/LogoutModal";
+import SidebarComponent from "./SideBarComponent";
+import TopBarComponent from "./TopBarComponent";
+import DashboardPage from "./DashboardPage";
+import ProductsPage from "./ProductsPage";
+import OrdersPage from "./OrdersPage";
+import CustomersPage from "./CustomersPage";
+import MessagesPage from "./MessagesPage";
+import SettingsPage from "./SettingsPage";
+import AddProductModal from "./modals/AddProductModal";
+import EditProductModal from "./modals/EditProductModal";
+import OrderDetailModal from "./modals/OrderDetailModal";
+import LogoutModal from "./modals/LogoutModal"
 import { useNavigate } from "react-router";
 
 // Types

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ShoppingBag, Trash2, Plus, Minus } from "lucide-react";
-import { useCartStore } from "../stores/cartStore";
+import { useCartStore } from "../_shared/stores/cartStore.ts";
 
 export default function CartPage() {
   const navigate = useNavigate();

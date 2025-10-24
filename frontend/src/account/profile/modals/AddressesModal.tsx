@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import type { Address } from "../../../types/types";
+import type { Address } from "../../../_shared/types/types";
 
 interface AddressesModalProps {
   isOpen: boolean;
